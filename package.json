@@ -1,0 +1,16 @@
+{
+  "name": "xtool-connector",
+  "version": "0.0.0",
+  "description": "",
+  "main": "main/main.js",
+  "scripts": {
+    "start": "electron main/main.js"
+  },
+  "keywords": [],
+  "author": "1RandomDev",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "axios": "^1.6.3",
+    "electron": "^28.1.0"
+  }
+}

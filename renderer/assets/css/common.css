@@ -1,0 +1,106 @@
+@font-face {
+  font-family: InterVariable;
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../fonts/InterVariable.woff2") format("woff2");
+}
+@font-face {
+  font-family: InterVariable;
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../fonts/InterVariable-Italic.woff2") format("woff2");
+}
+
+body, button, input {
+    font-family: "Inter", sans-serif;
+}
+@supports (font-variation-settings: normal) {
+    body, button, input {
+        font-family: "InterVariable", sans-serif;
+        font-optical-sizing: auto;
+    }
+}
+body {
+    color: white;
+    background-color: #313338;
+    margin: 0;
+}
+button {
+    font-weight: 600;
+}
+
+.defaultButton {
+    color: white;
+    background-color: #00ad21;
+    border: 0;
+    border-radius: 3px;
+    padding: 6px 16px 6px 16px;
+    font-size: 15px;
+    transition: 0.4s;
+}
+.defaultButton:enabled:hover {
+    background-color: #28be44;
+    cursor: pointer;
+}
+.defaultButton:disabled {
+    background-color: #209c37;
+}
+.outlineButton {
+    color: #313131;
+    border: #adadad solid 1px;
+    background-color: #ebebeb;
+    border-radius: 3px;
+    padding: 6px 16px 6px 16px;
+    font-size: 15px;
+    transition: 0.4s;
+}
+.outlineButton:enabled:hover {
+    border-color: #00ad21;
+    color: #00ad21;
+    cursor: pointer;
+}
+.outlineButton:disabled {
+    border-color: #cacaca;
+}
+.transparentButton {
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    cursor: pointer;
+}
+.transparentButton:active {
+    background-size: 95%;
+}
+.defaultTextField {
+    color: #313131;
+    border: #adadad solid 1px;
+    background-color: #ebebeb;
+    caret-color: #00ad21;
+    border-radius: 3px;
+    outline: 0;
+    font-size: 15px;
+    padding: 5px;
+    transition: 0.4s;
+}
+.defaultTextField:focus, .defaultTextField:enabled:hover {
+    border-color: #00ad21;
+}
+.defaultCheckbox {
+    accent-color: #00ad21;
+    transition: 0.4s;
+}
+.defaultCheckbox:hover {
+    accent-color: #28be44;
+}
+.defaultInfoBox {
+    border: #00ad21 solid 1px;
+    border-radius: 3px;
+    background-color: #00ad2044;;
+    padding: 10px;
+}
+

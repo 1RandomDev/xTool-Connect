@@ -1,0 +1,35 @@
+html {
+    height: 100%;
+}
+body {
+    position: relative;
+    min-height: 100%;
+}
+
+.connectDeviceContainer {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+}
+.connectDeviceContainer > * {
+    display: block;
+    width: 100%;
+    height: 36px;
+    box-sizing: border-box;
+    text-align: center;
+}
+.connectDeviceContainer #connectBtn {
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+#addDeviceBtn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    height: 35px;
+    width: 35px;
+    background-image: url("../img/plus-circle.svg");
+}

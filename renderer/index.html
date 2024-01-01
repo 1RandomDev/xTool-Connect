@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/index.css">
+    <link rel="stylesheet" href="assets/css/loadingbuttons.min.css">
+    <link rel="stylesheet" href="assets/css/loading.min.css">
+    <link rel="stylesheet" href="assets/css/toastr.min.css">
+</head>
+<body>
+    <button class="transparentButton" id="addDeviceBtn" onclick="location.href='wifi-setup.html'" title="Setup a new device"></button>
+    <div class="connectDeviceContainer">
+        <h2>Connect your device</h2>
+        <input class="defaultTextField" id="ipAddressField" placeholder="e.g. 192.168.178.30">
+        <button class="defaultButton ld-ext-right" id="connectBtn" disabled>
+            Connect
+            <div class="ld ld-ring ld-spin"></div>
+        </button>
+        <div class="autoConnectCheckbox">
+            <input class="defaultCheckbox" id="autoConnectOpt" type="checkbox">
+            <label for="autoConnectOpt">Auto connect</label>
+        </div>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/toastr.min.js"></script>
+    <script src="assets/js/index.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+.setupWifiContainer {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+}
+.setupWifiContainer > input, button, h2 {
+    display: block;
+    width: 100%;
+    height: 36px;
+    box-sizing: border-box;
+    text-align: center;
+}
+.setupWifiContainer input {
+    margin-bottom: 18px;
+    margin-top: 3px;
+}
+.setupWifiContainer #connectBtn {
+    margin-bottom: 5px;
+}
+.setupWifiContainer label {
+    font-weight: 500;
+}
+.setupWifiContainer .info {
+    text-align: justify;
+}
