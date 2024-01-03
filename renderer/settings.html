@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/settings.css">
+    <link rel="stylesheet" href="assets/css/loadingbuttons.min.css">
+    <link rel="stylesheet" href="assets/css/loading.min.css">
+    <link rel="stylesheet" href="assets/css/toastr.min.css">
+</head>
+<body>
+    <div id="settingsContainer">
+        <h3>Device settings</h3>
+
+        <label>Positioning mode</label>
+        <div class="radioButtonGroup">
+            <input class="defaultRadioButton" id="positioningCross" name="positioningMode" type="radio" value="0">
+            <label for="positioningCross">Red cross</label>
+            <input class="defaultRadioButton" id="positioningDot" name="positioningMode" type="radio" value="1">
+            <label for="positioningDot">Laser dot</label>
+        </div>
+
+        <label>Red cross offset</label>
+        <div class="crossOffsetContainer">
+            <div class="inputGroup">
+                X: <input class="defaultTextField" name="crossOffsetX" type="number" min="0" max="5" disabled>
+            </div>
+            <div class="inputGroup">
+                Y: <input class="defaultTextField" name="crossOffsetY" type="number" min="0" max="5" disabled>
+            </div>
+        </div>
+
+        <label>Flame alarm</label>
+        <div class="radioButtonGroup">
+            <input class="defaultRadioButton" id="flameAlarmHigh" name="flameAlarmMode" type="radio" value="1">
+            <label for="flameAlarmHigh">High sensitivity</label>
+            <input class="defaultRadioButton" id="flameAlarmLow" name="flameAlarmMode" type="radio" value="2">
+            <label for="flameAlarmLow">Low sensitivity</label>
+            <input class="defaultRadioButton" id="flameAlarmOff" name="flameAlarmMode" type="radio" value="3">
+            <label for="flameAlarmOff">Disabled</label>
+        </div>
+
+        <label>Stop when moved or tilted</label>
+        <div class="radioButtonGroup">
+            <input class="defaultRadioButton" id="tiltSwitchOn" name="tiltSwitchMode" type="radio" value="1">
+            <label for="tiltSwitchOn">Enabed</label>
+            <input class="defaultRadioButton" id="tiltSwitchOff" name="tiltSwitchMode" type="radio" value="0">
+            <label for="tiltSwitchOff">Disabled</label>
+        </div>
+
+        <label>Limit switches</label>
+        <div class="radioButtonGroup">
+            <input class="defaultRadioButton" id="limitSwitchesOn" name="limitSwitchesMode" type="radio" value="1">
+            <label for="limitSwitchesOn">Enabed</label>
+            <input class="defaultRadioButton" id="limitSwitchesOff" name="limitSwitchesMode" type="radio" value="0">
+            <label for="limitSwitchesOff">Disabled</label>
+        </div>
+
+        <h3>Device info</h3>
+        
+        <label for="deviceName">Device name</label>
+        <input class="defaultTextField" name="deviceName" placeholder="xTool D1 Pro">
+
+        <label for="deviceModel">Device model</label>
+        <span class="info" name="deviceModel"></span>
+
+        <label for="laserPower">Laser power</label>
+        <span class="info" name="laserPower"></span>
+
+        <div class="firmwareVersionContainer">
+            <label for="firmwareVersion">Firmware version</label>
+            <span class="info" name="firmwareVersion"></span>
+        </div>
+        <button id="updateButton" class="outlineButton">Check for updates</button>
+
+        <label for="serialNumber">Serial number</label>
+        <span class="info" name="serialNumber"></span>
+
+        <label for="macAddress">MAC address</label>
+        <span class="info" name="macAddress"></span>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/toastr.min.js"></script>
+    <script src="assets/js/settings.js"></script>
+</body>
+</html>

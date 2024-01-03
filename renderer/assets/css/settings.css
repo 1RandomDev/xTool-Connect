@@ -1,0 +1,59 @@
+body {
+    position: relative;
+}
+
+#settingsContainer {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 400px;
+    padding-bottom: 30px;
+}
+#settingsContainer > input {
+    display: block;
+    width: 100%;
+}
+#settingsContainer > *, #settingsContainer .firmwareVersionContainer > * {
+    display: block;
+}
+#settingsContainer h3 {
+    margin: 30px 0 0 0;
+    font-size: 20px;
+}
+#settingsContainer > label, #settingsContainer > button, #settingsContainer .firmwareVersionContainer {
+    margin: 20px 0 4px 0;
+}
+#settingsContainer .info {
+    font-weight: 600;
+}
+#settingsContainer .firmwareVersionContainer {
+    display: inline-block;
+}
+#settingsContainer #updateButton {
+    float: right;
+}
+#settingsContainer .radioButtonGroup input {
+    margin: 0;
+}
+#settingsContainer .radioButtonGroup label {
+    color: white;
+    margin-right: 14px;
+}
+#settingsContainer .crossOffsetContainer {
+    display: inline-block;
+    width: 100%;
+}
+#settingsContainer .crossOffsetContainer input {
+    width: 172px
+}
+#settingsContainer .crossOffsetContainer .inputGroup {
+    width: 48%;
+    margin: 0px auto;
+}
+#settingsContainer .crossOffsetContainer .inputGroup:last-of-type {
+    float: right;
+}
+#settingsContainer .crossOffsetContainer .inputGroup:first-of-type {
+    float: left;
+}

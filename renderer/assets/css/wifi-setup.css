@@ -9,7 +9,6 @@
     display: block;
     width: 100%;
     height: 36px;
-    box-sizing: border-box;
     text-align: center;
 }
 .setupWifiContainer input {

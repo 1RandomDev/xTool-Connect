@@ -30,6 +30,12 @@ body {
 button {
     font-weight: 600;
 }
+label {
+    color: #dbdada;
+}
+input {
+    box-sizing: border-box;
+}
 
 .defaultButton {
     color: white;
@@ -90,11 +96,15 @@ button {
 .defaultTextField:focus, .defaultTextField:enabled:hover {
     border-color: #00ad21;
 }
-.defaultCheckbox {
+.defaultTextField:disabled {
+    background-color: #dadada;
+    color: #707070;
+}
+.defaultCheckbox, .defaultRadioButton {
     accent-color: #00ad21;
     transition: 0.4s;
 }
-.defaultCheckbox:hover {
+.defaultCheckbox:hover, .defaultRadioButton:hover {
     accent-color: #28be44;
 }
 .defaultInfoBox {
