@@ -51,7 +51,7 @@ body {
     width: 48%;
     margin: 0px auto;
 }
-#settingsContainer .crossOffsetContainer .inputGroup:last-of-type {
+#settingsContainer .crossOffsetContainer .inputGroup:last-of-type, #settingsContainer .backBtn {
     float: right;
 }
 #settingsContainer .crossOffsetContainer .inputGroup:first-of-type {

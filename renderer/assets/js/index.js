@@ -18,7 +18,7 @@ connectBtn.addEventListener('click', () => {
         const response = await window.electronAPI.connectDevice();
         connectBtn.classList.remove('running');
         if(response.result == 'ok') {
-            location.href = 'settings.html';
+            location.href = 'control.html';
         } else {
             toastr.error('Unable to connect to your device. Please check if the IP address is correct and if the device is turned on and connected to the network.', 'Connection failed')
         }
@@ -38,3 +38,8 @@ autoConnectOpt.addEventListener('change', () => {
         connectBtn.click();
     }
 })();
+
+const params = new URLSearchParams(window.location.search);
+if(params.get('message') == 'timeout') {
+    toastr.error('Connection to device lost. Please check your internet connection and reconnect.', 'Connection lost');
+}

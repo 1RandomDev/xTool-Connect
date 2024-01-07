@@ -7,7 +7,7 @@ settingsContainer.addEventListener('change', event => {
     } else {
         value = event.target.value;
     }
-    window.electronAPI.saveSettings({ [event.target.name]: value });
+    window.electronAPI.saveDeviceSettings({ [event.target.name]: value });
 
     if(event.target.name == 'positioningMode') {
         settingsContainer.querySelector('[name="crossOffsetX"]').disabled = value == '1';

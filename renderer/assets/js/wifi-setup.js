@@ -27,10 +27,10 @@ connectBtn.addEventListener('click', () => {
                 }, 4000);
                 break;
             case 'fail_network':
-                toastr.error('You are not connected to the xTool hotspot, please go to your WiFi settings and make sure you\'re connected to the hotspot starting with <b>xTool_D1P_</b>.', 'Setup faild');
+                toastr.error('You are not connected to the xTool hotspot, please go to your WiFi settings and make sure you\'re connected to the hotspot starting with <b>xTool_D1P_</b>.', 'Setup failed');
                 break;
             case 'fail':
-                toastr.error('Device could not be connected to the specified WiFI. Please verify that your device is turned on and in setup mode.', 'Setup faild');
+                toastr.error('Device could not be connected to the specified WiFI. Please verify that your device is turned on and in setup mode.', 'Setup failed');
                 break;
         }
     }, 1000);

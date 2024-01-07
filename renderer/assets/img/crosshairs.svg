@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="10"
+   width="10"
+   viewBox="0 0 320 320"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="crosshairs.svg"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="true"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="25.40625"
+     inkscape:cx="3.3456335"
+     inkscape:cy="10.056581"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="0"
+     inkscape:window-y="35"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+  <path
+     opacity="1"
+     fill="#ffffff"
+     d="m 160,0 c 11.0625,0 20,8.9375 20,20 v 6.5 c 58.5625,8.6875 104.8125,55 113.5,113.5 h 6.5 c 11.0625,0 20,8.9375 20,20 0,11.0625 -8.9375,20 -20,20 h -6.5 c -8.6875,58.5625 -55,104.8125 -113.5,113.5 v 6.5 c 0,11.0625 -8.9375,20 -20,20 -11.0625,0 -20,-8.9375 -20,-20 v -6.5 C 81.4375,284.8125 35.1875,238.5625 26.5,180 H 20 C 8.9375,180 0,171.0625 0,160 0,148.9375 8.9375,140 20,140 h 6.5 C 35.1875,81.4375 81.4375,35.1875 140,26.5 V 20 C 140,8.9375 148.9375,0 160,0 Z M 67.125,180 c 7.8125,36.4375 36.5,65.0625 72.875,72.875 V 240 c 0,-11.0625 8.9375,-20 20,-20 11.0625,0 20,8.9375 20,20 v 12.875 c 36.4375,-7.8125 65.0625,-36.5 72.875,-72.875 H 240 c -11.0625,0 -20,-8.9375 -20,-20 0,-11.0625 8.9375,-20 20,-20 h 12.875 C 245.0625,103.5625 216.4375,74.9375 180,67.125 V 80 c 0,11.0625 -8.9375,20 -20,20 -11.0625,0 -20,-8.9375 -20,-20 V 67.125 C 103.5625,74.9375 74.9375,103.5625 67.125,140 H 80 c 11.0625,0 20,8.9375 20,20 0,11.0625 -8.9375,20 -20,20 z M 160,140 a 20,20 0 1 1 0,40 20,20 0 1 1 0,-40 z"
+     id="path1"
+     style="stroke-width:0.625" />
+</svg>

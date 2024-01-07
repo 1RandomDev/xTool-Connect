@@ -1,0 +1,120 @@
+.controlsContainer {
+    padding: 40px;
+}
+.connectionContainer, .positioningContainer, .gcodeContainer, .laserSpotContainer {
+    margin-bottom: 32px;
+    width: 100%;
+    display: inline-block;
+}
+.connectionContainer h3 {
+    font-size: 22px;
+    margin: 2px 0 0 0;
+}
+.connectionContainer .buttonGroup, .speedControls, .intensityControl, .statusContainer {
+    float: right;
+}
+#positioningButtons, .connectionContainer h3, #laserSpotBtn, .currentJobContainer .buttonGroup {
+    float: left;
+}
+.positioningContainer h3, .laserSpotContainer h3 {
+    margin-top: 0;
+    font-size: 16px;
+}
+.laserSpotContainer h3 {
+    margin-bottom: 0;
+}
+#positioningButtons button {
+    width: 35px;
+    height: 35px;
+    margin-right: 1px;
+    margin-bottom: 6px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 40%;
+}
+#positioningButtons .btnUp {
+    margin-left: 40px;
+    background-image: url("../img/arrow-up.svg");
+}
+#positioningButtons .btnDown {
+    margin: 0 0 0 40px;
+    background-image: url("../img/arrow-down.svg");
+}
+#positioningButtons .btnRight {
+    background-image: url("../img/arrow-right.svg");
+}
+#positioningButtons .btnLeft {
+    background-image: url("../img/arrow-left.svg");
+}
+#positioningButtons .btnHome {
+    background-size: 50%;
+    background-image: url("../img/crosshairs.svg");
+}
+.speedControls > *, .intensityControl > * {
+    display: block;
+}
+.speedControls input, .intensityControl input {
+    width: 150px;
+}
+.speedControls label, .intensityControl label {
+    margin-bottom: 3px;
+}
+.speedControls label:last-of-type {
+    margin-top: 10px;
+}
+#laserSpotBtn {
+    margin-top: 22px;
+}
+#gcodeDropzone {
+    background-color: #252627;
+    border: 1px solid rgb(160, 160, 160);
+    border-radius: 4px;
+    border-style: dashed;
+    padding: 18px;
+    text-align: center;
+    cursor: pointer;
+}
+#gcodeDropzone * {
+    pointer-events: none;
+}
+#gcodeDropzone img {
+    height: 28px;
+}
+#gcodeDropzone .text {
+    font-size: 18px;
+    margin: 8px 0 0 0;
+}
+#gcodeDropzone .info {
+    font-size: 10px;
+    margin: 8px 0 0 0;
+    color: #929292;
+}
+#gcodeDropzone.drag {
+    border-color: #00ad21;;
+}
+#gcodeDropzone.disabled {
+    cursor: no-drop;
+    pointer-events: none;
+}
+#gcodeDropzone.disabled > * {
+    filter: brightness(0.4);
+}
+.currentJobContainer {
+    width: 100%;
+}
+.currentJobContainer .buttonGroup button {
+    height: 40px;
+    width: 100px;
+}
+.progressBar {
+    display: inline-block;
+    width: 100%;
+}
+.progressBar .filler {
+    width: 0;
+}
+.statusContainer {
+    font-weight: 700;
+    font-size: 25px;
+    margin-top: 4px;
+}

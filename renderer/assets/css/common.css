@@ -26,6 +26,7 @@ body {
     color: white;
     background-color: #313338;
     margin: 0;
+    cursor: default;
 }
 button {
     font-weight: 600;
@@ -36,6 +37,18 @@ label {
 input {
     box-sizing: border-box;
 }
+::-webkit-scrollbar {
+    width: 8px;
+    background-color: #212225;
+    border-radius: 5px;
+}
+::-webkit-scrollbar-thumb {
+    background: #646464; 
+    border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #808080; 
+}
 
 .defaultButton {
     color: white;
@@ -44,7 +57,7 @@ input {
     border-radius: 3px;
     padding: 6px 16px 6px 16px;
     font-size: 15px;
-    transition: 0.4s;
+    transition: 0.2s;
 }
 .defaultButton:enabled:hover {
     background-color: #28be44;
@@ -52,6 +65,35 @@ input {
 }
 .defaultButton:disabled {
     background-color: #209c37;
+    color: #d1d1d1;
+    cursor: not-allowed;
+}
+.defaultButton.buttonRed {
+    background-color: #e64646;
+}
+.defaultButton.buttonRed:disabled {
+    background-color: #a83232;
+}
+.defaultButton.buttonRed:enabled:hover {
+    background-color: #e75d5d;
+}
+.defaultButton.buttonGray {
+    background-color: #6d6d6d;
+}
+.defaultButton.buttonGray:disabled {
+    background-color: #575757;
+}
+.defaultButton.buttonGray:enabled:hover {
+    background-color: #818181;
+}
+.defaultButton.buttonYellow {
+    background-color: #ffcf3e;
+}
+.defaultButton.buttonYellow:disabled {
+    background-color: #cea731;
+}
+.defaultButton.buttonYellow:enabled:hover {
+    background-color: #ffd967;
 }
 .outlineButton {
     color: #313131;
@@ -60,7 +102,7 @@ input {
     border-radius: 3px;
     padding: 6px 16px 6px 16px;
     font-size: 15px;
-    transition: 0.4s;
+    transition: 0.2s;
 }
 .outlineButton:enabled:hover {
     border-color: #00ad21;
@@ -69,6 +111,7 @@ input {
 }
 .outlineButton:disabled {
     border-color: #cacaca;
+    cursor: not-allowed;
 }
 .transparentButton {
     padding: 0;
@@ -79,6 +122,29 @@ input {
     background-size: 100%;
     cursor: pointer;
 }
+.buttonGroup button {
+    float: left;
+}
+.buttonGroup button:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.buttonGroup button:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.defaultButton.buttonGroup button:not(:last-child) {
+    border-right: none;
+}
+.defaultButton.buttonGroup button:not(:first-child) {
+    border-left: none;
+}
+.buttonGroup:after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
 .transparentButton:active {
     background-size: 95%;
 }
@@ -99,10 +165,12 @@ input {
 .defaultTextField:disabled {
     background-color: #dadada;
     color: #707070;
+    cursor: not-allowed;
 }
 .defaultCheckbox, .defaultRadioButton {
     accent-color: #00ad21;
     transition: 0.4s;
+    cursor: pointer;
 }
 .defaultCheckbox:hover, .defaultRadioButton:hover {
     accent-color: #28be44;
@@ -114,3 +182,16 @@ input {
     padding: 10px;
 }
 
+.defaultProgressBar {
+    width: 200px;
+    height: 10px;
+    background-color: #ebebeb;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 8px 0 8px;
+}
+.defaultProgressBar .filler {
+    width: 40%;
+    height: 10px;
+    background-color: #00ad21;
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/control.css">
+    <link rel="stylesheet" href="assets/css/loadingbuttons.min.css">
+    <link rel="stylesheet" href="assets/css/loading.min.css">
+    <link rel="stylesheet" href="assets/css/toastr.min.css">
+</head>
+<body>
+    <div class="controlsContainer">
+        <div class="connectionContainer">
+            <h3 id="deviceName"></h3>
+            <div class="buttonGroup">
+                <button id="disconnectBtn" class="defaultButton buttonGray">Disconnect</button>
+                <button id="settingsBtn" class="defaultButton" onclick="location.href='settings.html'">Settings</button>
+            </div>
+        </div>
+    
+        <div class="positioningContainer">
+            <h3>Move laser module</h3>
+            <div id="positioningButtons">
+                <button class="defaultButton btnUp" value="up"></button>
+                <div>
+                    <button class="defaultButton btnLeft" value="left"></button>
+                    <button class="defaultButton btnHome" value="home"></button>
+                    <button class="defaultButton btnRight" value="right"></button>
+                </div>
+                <button class="defaultButton btnDown" value="down"></button>
+            </div>
+            <div class="speedControls">
+                <label>Distance (mm)</label>
+                <input class="defaultTextField" id="moveDistance" type="number" min="1" max="400">
+    
+                <label>Speed (mm/s)</label>
+                <input class="defaultTextField" id="moveSpeed" type="number" min="1" max="180">
+            </div>
+        </div>
+    
+        <div class="laserSpotContainer">
+            <h3>Laser spot</h3>
+            <button class="defaultButton" id="laserSpotBtn">Turn on</button>
+    
+            <div class="intensityControl">
+                <label>Intensity (%)</label>
+                <input class="defaultTextField" id="laserSpotIntensity" type="number" min="1" max="10">
+            </div>
+        </div>
+    
+        <div class="gcodeContainer">
+            <div id="gcodeDropzone">
+                <img src="assets/img/upload.svg">
+                <p class="text">Upload file</p>
+                <p class="info">Click to select or drag file here.<br>Supported file types: <b>.gcode</b></p>
+            </div>
+        </div>
+
+        <div class="currentJobContainer">
+            <div class="buttonGroup">
+                <button class="defaultButton buttonYellow" id="pauseBtn" value="pause">Pause</button>
+                <button class="defaultButton buttonRed" id="stopBtn" value="stop">Stop</button>
+            </div>
+            <div class="statusContainer"><span id="currentStatus"></span>&nbsp;&nbsp;<span id="currentProgressNum"></span></div>
+            <div class="defaultProgressBar progressBar" >
+                <div class="filler" id="currentProgress"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/toastr.min.js"></script>
+    <script src="assets/js/control.js"></script>
+</body>
+</html>

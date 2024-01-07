@@ -4,7 +4,7 @@
   "description": "",
   "main": "main/app.js",
   "scripts": {
-    "start": "electron main/main.js"
+    "start": "electron main/app.js"
   },
   "keywords": [],
   "author": "1RandomDev",

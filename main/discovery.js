@@ -11,6 +11,7 @@ module.exports.scanDevices = () => {
         socket.on('listening', () => {
             socket.setBroadcast(true);
             socket.send(JSON.stringify({requestId}), DISCOVERY_PORT, '255.255.255.255');
+            console.log('Starting device scan.');
         });
 
         socket.on('message', (message, remote) => {
@@ -19,6 +20,7 @@ module.exports.scanDevices = () => {
                 if(message.requestId == requestId && !!message.ip && !!message.name) {
                     delete message.requestId;
                     devices.push(message);
+                    console.log('Discovered device: '+JSON.stringify(message));
                 }
             } catch(e) {}
         });

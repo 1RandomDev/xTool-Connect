@@ -11,6 +11,7 @@
 </head>
 <body>
     <div id="settingsContainer">
+        <button class="outlineButton backBtn" onclick="location.href='control.html'">Back</button>
         <h3>Device settings</h3>
 
         <label>Positioning mode</label>
@@ -60,7 +61,7 @@
         <h3>Device info</h3>
         
         <label for="deviceName">Device name</label>
-        <input class="defaultTextField" name="deviceName" placeholder="xTool D1 Pro">
+        <input class="defaultTextField" name="deviceName">
 
         <label for="deviceModel">Device model</label>
         <span class="info" name="deviceModel"></span>
@@ -72,7 +73,7 @@
             <label for="firmwareVersion">Firmware version</label>
             <span class="info" name="firmwareVersion"></span>
         </div>
-        <button id="updateButton" class="outlineButton">Check for updates</button>
+        <button id="updateButton" class="defaultButton">Check for updates</button>
 
         <label for="serialNumber">Serial number</label>
         <span class="info" name="serialNumber"></span>
