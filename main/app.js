@@ -33,7 +33,8 @@ function createWindow() {
         title: 'xTool Connect',
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
-        }
+        },
+        icon: path.join(__dirname, '../icon.png')
     });
     if(!process.env.DEBUG_MODE) {
         window.removeMenu();
