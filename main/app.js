@@ -89,11 +89,11 @@ app.whenReady().then(() => {
             window.webContents.send('websocket:message', data);
         });
         if(result.result == 'ok' && appSettings.grblBridgeEnabled) {
-            grblBridge.start(data => {
-                window.webContents.send('websocket:message', 'grbl:'+data.event);
+            grblBridge.start(async data => {
                 if(data.event == 'complete') {
-                    deviceController.uploadGcode(data.gcode, data.isProgram ? 1 : 0);
+                    await deviceController.uploadGcode(data.gcode, data.isProgram ? 1 : 0);
                 }
+                window.webContents.send('websocket:message', 'grbl:'+data.event);
             });
         }
         return result;

@@ -13,9 +13,11 @@ const DIRECTION_MAPPINGS = {
 let deviceAddress;
 let connected;
 let websocket;
+let wsCallback;
 let heartbeatTimer, lastHeartbeat;
 let laserDotActive = false;
 let paused = false;
+let framing = false;
 
 module.exports.setupWifi = async (credentials) => {
     try {
@@ -33,9 +35,10 @@ module.exports.setupWifi = async (credentials) => {
     return {result: 'fail'};
 };
 
-module.exports.connect = async (address, wsCallback) => {
+module.exports.connect = async (address, callback) => {
     if(connected) this.disconnect();
     deviceAddress = address;
+    wsCallback = callback;
 
     try {
         let res = await axios.get(`http://${deviceAddress}:8080/ping`);
@@ -58,6 +61,7 @@ module.exports.connect = async (address, wsCallback) => {
             connected = true;
             laserDotActive = false;
             paused = false;
+            framing = false;
             lastHeartbeat = Date.now();
             heartbeatTimer = setInterval(() => {
                 websocket.ping();
@@ -80,10 +84,20 @@ module.exports.connect = async (address, wsCallback) => {
             data = data.substring(0, data.length-1);
             console.log('WebSocket message: '+data);
 
-            if(data == 'ok:PAUSING') {
-                paused = true;
-            } else if(data == 'ok:IDLE' | data.startsWith('ok:WORKING_')) {
+            if(data.startsWith('ok:WORKING_')) {
                 paused = false;
+            }
+            switch(data) {
+                case 'ok:PAUSING':
+                    paused = true;
+                    break;
+                case 'ok:IDLE':
+                    paused = false;
+                    framing = false;
+                    break;
+                case 'ok:WORKING_FRAMING':
+                    framing = true;
+                    break;
             }
 
             wsCallback(data);
@@ -101,6 +115,7 @@ module.exports.disconnect = () => {
     deviceAddress = null;
     laserDotActive = false;
     paused = false;
+    framing = false;
     connected = false;
 };
 
@@ -206,6 +221,11 @@ module.exports.uploadGcode = async (content, type) => {
 
         console.log(`Uploading file GCODE type ${type}`);
         await axios.post(`http://${deviceAddress}:8080/upload?filetype=${type}`, form);
+
+        if(type == 0) {
+            wsCallback('ok:WORKING_FRAMING');
+            framing = true;
+        }
         return true;
     } catch(err) {
         console.error('Uploading GCODE failed:', err);
@@ -247,7 +267,7 @@ M106 S1
 M205 X424 Y400
 M28
 M18
-`;// Disable steppers or not?
+`;
         } else {
             gcode =
 `M17 S1
@@ -280,10 +300,7 @@ module.exports.setLaserDot = async (active, power) => {
         if(!laserDotActive) power = 0;
         if(power > 10) power = 10; // Limit to 10% for safety
 
-        let gcode =
-`M112 N0
-M9 S${power*10} N${laserDotActive ? 1000000000000 : 0}
-`;
+        let gcode = `M112 N0\nM9 S${power*10} N${laserDotActive ? 1000000000000 : 0}\n`;
 
         await this.executeGcode(gcode);
     } catch(err) {
@@ -310,6 +327,7 @@ module.exports.getCurrentState = async () => {
 
         state.laserDotActive = laserDotActive;
         state.paused = paused;
+        state.framing = framing;
     } catch(err) {
         console.error('Requesting current state failed:', err);
     }

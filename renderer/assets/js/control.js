@@ -81,23 +81,7 @@ stopBtn.addEventListener('click', () => {
     laserSpotIntensity.value = settings.laserSpotIntensity;
 
     window.electronAPI.onWebsocketMessage(data => {
-        if(data == 'ok:IDLE') {
-            gcodeDropzone.classList.remove('disabled');
-            disableMoveButtons(false);
-            pauseBtn.disabled = true;
-            stopBtn.disabled = true;
-            pauseBtn.innerText = 'Pause';
-            pauseBtn.value = 'pause';
-            currentStatus.innerText = 'Ready';
-            currentProgressNum.innerText = '0%';
-            clearInterval(progressUpdateTimer);
-            currentProgress.style.width = null;
-        } else if(data == 'ok:PAUSING') {
-            currentStatus.innerText = 'Paused';
-            pauseBtn.innerText = 'Resume';
-            pauseBtn.value = 'resume';
-            clearInterval(progressUpdateTimer);
-        } else if(data.startsWith('ok:WORKING_')) {
+        if(data.startsWith('ok:WORKING_')) {
             gcodeDropzone.classList.add('disabled');
             disableMoveButtons(true);
             pauseBtn.disabled = false;
@@ -109,15 +93,53 @@ stopBtn.addEventListener('click', () => {
                 updateProgress();
                 progressUpdateTimer = setInterval(updateProgress, 5000);
             }
-        } else if(data == 'WORK_STOPED') {
-            toastr.error('The current job was canceled either by the user or due to an error.', 'Job canceled')
-        } else if(data == 'err:tiltCheck' || data == 'err:movingCheck') {
-            toastr.error('The current job was aborted because the device was moved during operation.', 'Movement detected!', {timeOut: 8000});
-        } else if (data == 'err:flameCheck') {
-            toastr.error('The current job was aborted because a flame was detected. Please check the state of the device immediately.', 'Flame detected!', {timeOut: 8000});
-        } else if(data == 'err:limitCheck') {
-
-            toastr.error('The current job was aborted because a limit switch was activated.', 'Limit reached!', {timeOut: 8000});
+        }
+        switch(data) {
+            case 'ok:IDLE':
+                gcodeDropzone.classList.remove('disabled');
+                disableMoveButtons(false);
+                pauseBtn.disabled = true;
+                stopBtn.disabled = true;
+                pauseBtn.innerText = 'Pause';
+                pauseBtn.value = 'pause';
+                currentStatus.innerText = 'Ready';
+                currentProgressNum.innerText = '0%';
+                clearInterval(progressUpdateTimer);
+                progressUpdateTimer = null;
+                currentProgress.style.width = null;
+                break;
+            case 'ok:PAUSING':
+                currentStatus.innerText = 'Paused';
+                pauseBtn.innerText = 'Resume';
+                pauseBtn.value = 'resume';
+                clearInterval(progressUpdateTimer);
+                progressUpdateTimer = null;
+                break;
+            case 'ok:WORKING_FRAMING':
+                currentStatus.innerText = 'Framing';
+                break;
+            case 'WORK_STOPED':
+                toastr.error('The current job was canceled either by the user or due to an error.', 'Job canceled');
+                break;
+            case 'err:tiltCheck':
+            case 'err:movingCheck':
+                toastr.error('The current job was aborted because the device was moved during operation.', 'Movement detected!', {timeOut: 8000});
+                break;
+            case 'err:flameCheck':
+                toastr.error('The current job was aborted because a flame was detected. Please check the state of the device immediately.', 'Flame detected!', {timeOut: 8000});
+                break;
+            case 'err:limitCheck':
+                toastr.error('The current job was aborted because a limit switch was activated.', 'Limit reached!', {timeOut: 8000});
+                break;
+            case 'grbl:started':
+                toastr.success('Please wait until the file is received and the upload is complete.', 'Receiving data from LightBurn...');
+                break;
+                case 'grbl:complete':
+                toastr.success('You can now start the job by pressing the start button on the device.', 'LightBurn upload complete');
+                break;
+            case 'grbl:timeout':
+                toastr.success('File could not be sent to the device.', 'LightBurn upload failed');
+                break;
         }
     });
 
@@ -142,6 +164,8 @@ stopBtn.addEventListener('click', () => {
             pauseBtn.innerText = 'Resume';
             pauseBtn.value = 'resume';
             currentStatus.innerText = 'Paused';
+        } else if(currentState.framing) {
+            currentStatus.innerText = 'Framing';
         } else {
             currentStatus.innerText = 'Working';
         }
@@ -149,7 +173,7 @@ stopBtn.addEventListener('click', () => {
 })();
 
 async function handleUpload(file) {
-    if(!file.name.endsWith('.gcode')) {
+    if(!file.name.endsWith('.gcode') && !file.name.endsWith('.gc') && !file.name.endsWith('.g')) {
         toastr.error('Only <b>.gcode</b> files are supported for upload. Please export your project as GCODE.', 'Unsupported filetype')
         return;
     }

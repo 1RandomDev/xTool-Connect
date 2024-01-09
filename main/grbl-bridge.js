@@ -42,6 +42,7 @@ module.exports.start = (cb) => {
                     case '?':
                         startMessageReceived = true;
                         timeoutInterval = setInterval(checkTimeout, 600);
+                        fireCallback({event: 'started'});
                         console.log('[GRBL] Transmission started');
     
                         socket.write('<Idle|MPos:0.000,0.000,0.000|FS:0,0|Pn:PXYZ|Ov:100,100,100>\n');
@@ -52,6 +53,7 @@ module.exports.start = (cb) => {
                         if(!startMessageReceived) {
                             startMessageReceived = true;
                             timeoutInterval = setInterval(checkTimeout, 600);
+                            fireCallback({event: 'started'});
                             console.log('[GRBL] Transmission started');
                         }
     
