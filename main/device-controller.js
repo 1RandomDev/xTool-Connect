@@ -19,7 +19,11 @@ let paused = false;
 
 module.exports.setupWifi = async (credentials) => {
     try {
-        const response = await axios.post('http://192.168.40.1:8080/net?action=connsta', credentials.ssid+' '+credentials.password);
+        const response = await axios.post('http://192.168.40.1:8080/net?action=connsta', credentials.ssid+' '+credentials.password, {
+            headers: {
+                'Content-Type': 'text/plain'
+            }
+        });
         if(response.data.result == 'ok') return {result: 'ok'};
     } catch(err) {
         console.error("WiFi setup failed:", err.message);
@@ -187,7 +191,10 @@ module.exports.saveSettings = async (settings) => {
     }
 };
 
-module.exports.uploadFile = async (path, type) => {
+module.exports.uploadFile = (path, type) => {
+    return this.uploadGcode(fs.createReadStream(path), type);
+};
+module.exports.uploadGcode = async (content, type) => {
     if(!connected) {
         console.error('Uploading GCODE failed: Not connected');
         return false;
@@ -195,9 +202,9 @@ module.exports.uploadFile = async (path, type) => {
 
     try {
         const form = new FormData();
-        form.append('file', fs.createReadStream(path));
+        form.append('file', content, 'export.gcode');
 
-        console.log(`Uploading file "${path}" type ${type}`);
+        console.log(`Uploading file GCODE type ${type}`);
         await axios.post(`http://${deviceAddress}:8080/upload?filetype=${type}`, form);
         return true;
     } catch(err) {
@@ -205,6 +212,24 @@ module.exports.uploadFile = async (path, type) => {
         return false;
     }
 }
+
+module.exports.executeGcode = async (gcode) => {
+    if(!connected) {
+        console.error('Executing GCODE failed: Not connected');
+        return;
+    }
+
+    try {
+        await axios.post(`http://${deviceAddress}:8080/cmd`, gcode, {
+            headers: {
+                'Content-Type': 'text/plain'
+            }
+        });
+    } catch(err) {
+        console.error('Executing GCODE failed:', err);
+        return;
+    }
+};
 
 module.exports.moveLaser = async (direction, distance, speed) => {
     if(!connected) {
@@ -237,11 +262,7 @@ M18
 `;
         }
 
-        await axios.post(`http://${deviceAddress}:8080/cmd`, gcode, {
-            headers: {
-                'Content-Type': 'text/plain'
-            }
-        });
+        await this.executeGcode(gcode);
     } catch(err) {
         console.error('Moving laser failed failed:', err);
     }
@@ -264,11 +285,7 @@ module.exports.setLaserDot = async (active, power) => {
 M9 S${power*10} N${laserDotActive ? 1000000000000 : 0}
 `;
 
-        await axios.post(`http://${deviceAddress}:8080/cmd`, gcode, {
-            headers: {
-                'Content-Type': 'text/plain'
-            }
-        });
+        await this.executeGcode(gcode);
     } catch(err) {
         console.error('Toggel laser dot failed:', err);
     }
@@ -322,8 +339,9 @@ module.exports.control = async (action) => {
 
     try {
         await axios.get(`http://${deviceAddress}:8080/cnc/data?action=${action}`);
+        if(action == 'stop') await this.executeGcode('M108\nM112 N0\nM9 S0 N0\n');
     } catch(err) {
         console.error('Sending control message faild:', err);
     }
-    return 0;
+    return;
 };

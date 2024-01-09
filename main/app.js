@@ -3,13 +3,15 @@ const path = require('node:path');
 const fs = require('node:fs');
 const discovery = require('./discovery.js');
 const deviceController = require('./device-controller.js');
+const grblBridge = require('./grbl-bridge.js');
 
 let appSettings = {
     deviceAddress: '',
     autoConnect: false,
     moveSpeed: 50,
     moveDistance: 10,
-    laserSpotIntensity: 3
+    laserSpotIntensity: 3,
+    grblBridgeEnabled: true,
 }
 const confDir = (process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + "/.local/share"))+'/xTool-Connect';
 if(!fs.existsSync(confDir)) {
@@ -33,6 +35,10 @@ function createWindow() {
             preload: path.join(__dirname, 'preload.js')
         }
     });
+    if(!process.env.DEBUG_MODE) {
+        window.removeMenu();
+        window.setResizable(false);
+    }
 
     window.loadFile('../renderer/index.html');
     return window;
@@ -71,9 +77,9 @@ app.whenReady().then(() => {
     ipcMain.handle('deviceMenu:discover', () => {
         return discovery.scanDevices();
     });
-    ipcMain.handle('deviceMenu:connect', () => {
+    ipcMain.handle('deviceMenu:connect', async () => {
         firstConnect = false;
-        return deviceController.connect(appSettings.deviceAddress, data => {
+        const result = await deviceController.connect(appSettings.deviceAddress, data => {
             if(data == 'err:TIMEOUT') {
                 window.loadFile('../renderer/index.html', {
                     query: {message: 'timeout'}
@@ -81,9 +87,19 @@ app.whenReady().then(() => {
             }
             window.webContents.send('websocket:message', data);
         });
+        if(result.result == 'ok' && appSettings.grblBridgeEnabled) {
+            grblBridge.start(data => {
+                window.webContents.send('websocket:message', 'grbl:'+data.event);
+                if(data.event == 'complete') {
+                    deviceController.uploadGcode(data.gcode, data.isProgram ? 1 : 0);
+                }
+            });
+        }
+        return result;
     });
     ipcMain.handle('deviceMenu:disconnect', () => {
         deviceController.disconnect();
+        grblBridge.stop();
     });
 
     ipcMain.handle('control:uploadGcode', (event, path, type) => {
