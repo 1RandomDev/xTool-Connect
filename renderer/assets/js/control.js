@@ -11,7 +11,7 @@ const currentStatus = document.getElementById('currentStatus');
 const currentProgress = document.getElementById('currentProgress');
 const currentProgressNum = document.getElementById('currentProgressNum');
 
-let progressUpdateTimer, laserSpotActive;
+let progressUpdateTimer, laserSpotActive, uploadNotification;
 
 disconnectBtn.addEventListener('click', () => {
     window.electronAPI.disconnectDevice();
@@ -81,20 +81,21 @@ stopBtn.addEventListener('click', () => {
     laserSpotIntensity.value = settings.laserSpotIntensity;
 
     window.electronAPI.onWebsocketMessage(data => {
-        if(data.startsWith('ok:WORKING_')) {
-            gcodeDropzone.classList.add('disabled');
-            disableMoveButtons(true);
-            pauseBtn.disabled = false;
-            stopBtn.disabled = false;
-            currentStatus.innerText = 'Working';
-            pauseBtn.innerText = 'Pause';
-            pauseBtn.value = 'pause';
-            if(!progressUpdateTimer) {
-                updateProgress();
-                progressUpdateTimer = setInterval(updateProgress, 5000);
-            }
-        }
         switch(data) {
+            case 'ok:WORKING_OFFLINE':
+            case 'ok:WORKING_FRAMING':
+                gcodeDropzone.classList.add('disabled');
+                disableMoveButtons(true);
+                pauseBtn.disabled = false;
+                stopBtn.disabled = false;
+                currentStatus.innerText = 'Working';
+                pauseBtn.innerText = 'Pause';
+                pauseBtn.value = 'pause';
+                if(!progressUpdateTimer) {
+                    updateProgress();
+                    progressUpdateTimer = setInterval(updateProgress, 5000);
+                }
+                break;
             case 'ok:IDLE':
                 gcodeDropzone.classList.remove('disabled');
                 disableMoveButtons(false);
@@ -132,12 +133,14 @@ stopBtn.addEventListener('click', () => {
                 toastr.error('The current job was aborted because a limit switch was activated.', 'Limit reached!', {timeOut: 8000});
                 break;
             case 'grbl:started':
-                toastr.success('Please wait until the file is received and the upload is complete.', 'Receiving data from LightBurn...');
+                uploadNotification = toastr.success('Please wait until the file is received and the upload is complete.', 'Receiving data from LightBurn...', {timeOut: 0});
                 break;
-                case 'grbl:complete':
+            case 'grbl:complete':
+                uploadNotification.remove();
                 toastr.success('You can now start the job by pressing the start button on the device.', 'LightBurn upload complete');
                 break;
             case 'grbl:timeout':
+                uploadNotification.remove();
                 toastr.success('File could not be sent to the device.', 'LightBurn upload failed');
                 break;
         }

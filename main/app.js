@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron/main');
+const { app, BrowserWindow, ipcMain, Notification } = require('electron/main');
 const path = require('node:path');
 const fs = require('node:fs');
 const discovery = require('./discovery.js');
@@ -12,6 +12,7 @@ let appSettings = {
     moveDistance: 10,
     laserSpotIntensity: 3,
     grblBridgeEnabled: true,
+    desktopNotifications: true,
 }
 const confDir = (process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + "/.local/share"))+'/xTool-Connect';
 if(!fs.existsSync(confDir)) {
@@ -21,11 +22,22 @@ const confFile = confDir+'/config.json';
 if(!fs.existsSync(confFile)) {
     fs.writeFileSync(confFile, '{}');
 } else {
-    appSettings = {...appSettings, ...JSON.parse(fs.readFileSync(confFile))};
+    Object.assign(appSettings, JSON.parse(fs.readFileSync(confFile)));
 }
 function saveSettings() {
     fs.writeFileSync(confFile, JSON.stringify(appSettings));
 }
+
+function desktopNotification(msg) {
+    if(!appSettings.desktopNotifications) return;
+    const template = {
+        title: 'xTool Connect',
+        icon: path.join(__dirname, '../icon.png'),
+    };
+    Object.assign(template, msg);
+    new Notification(template).show();
+}
+
 function createWindow() {
     const window = new BrowserWindow({
         width: 500,
@@ -81,10 +93,30 @@ app.whenReady().then(() => {
     ipcMain.handle('deviceMenu:connect', async () => {
         firstConnect = false;
         const result = await deviceController.connect(appSettings.deviceAddress, data => {
-            if(data == 'err:TIMEOUT') {
-                window.loadFile('../renderer/index.html', {
-                    query: {message: 'timeout'}
-                });
+            switch(data) {
+                case 'err:TIMEOUT':
+                    desktopNotification({body: 'Connection to device lost. Please check your internet connection and reconnect.'});
+                    window.loadFile('../renderer/index.html', {
+                        query: {message: 'timeout'}
+                    });
+                    grblBridge.stop();
+                    break;
+                case 'err:tiltCheck':
+                case 'err:movingCheck':
+                    desktopNotification({body: 'Movement detected!\nThe current job was aborted because the device was moved during operation.', urgency: 'critical'});
+                    break;
+                case 'err:flameCheck':
+                    desktopNotification({body: 'Flame detected!\nThe current job was aborted because a flame was detected. Please check the state of the device immediately.', urgency: 'critical'});
+                    break;
+                case 'err:limitCheck':
+                    desktopNotification({body: 'Limit reached!\nThe current job was aborted because a limit switch was activated.', urgency: 'critical'});
+                    break;
+                case 'grbl:complete':
+                    desktopNotification({body: 'LightBurn upload complete!\nou can now start the job by pressing the start button on the device.'});
+                    break;
+                case 'grbl:timeout':
+                    desktopNotification({body: 'LightBurn upload failed!\nFile could not be sent to the device.'});
+                    break;
             }
             window.webContents.send('websocket:message', data);
         });
