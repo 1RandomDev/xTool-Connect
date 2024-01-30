@@ -28,7 +28,7 @@ gcodeDropzone.addEventListener('drop', (event) => {
 gcodeDropzone.addEventListener('click', (event) => {
     let input = document.createElement('input');
     input.type = 'file';
-    input.accept = '.gcode';
+    input.accept = '.gcode,.gc,.g';
     input.onchange = () => {
         handleUpload(input.files[0])
     };
@@ -81,20 +81,23 @@ stopBtn.addEventListener('click', () => {
     laserSpotIntensity.value = settings.laserSpotIntensity;
 
     window.electronAPI.onWebsocketMessage(data => {
+        if(data == 'ok:WORKING_OFFLINE' || data == 'ok:WORKING_FRAMING') {
+            gcodeDropzone.classList.add('disabled');
+            disableMoveButtons(true);
+            pauseBtn.disabled = false;
+            stopBtn.disabled = false;
+            currentStatus.innerText = 'Working';
+            pauseBtn.innerText = 'Pause';
+            pauseBtn.value = 'pause';
+            if(!progressUpdateTimer) {
+                updateProgress();
+                progressUpdateTimer = setInterval(updateProgress, 5000);
+            }
+        }
         switch(data) {
-            case 'ok:WORKING_OFFLINE':
             case 'ok:WORKING_FRAMING':
-                gcodeDropzone.classList.add('disabled');
-                disableMoveButtons(true);
-                pauseBtn.disabled = false;
-                stopBtn.disabled = false;
-                currentStatus.innerText = 'Working';
-                pauseBtn.innerText = 'Pause';
-                pauseBtn.value = 'pause';
-                if(!progressUpdateTimer) {
-                    updateProgress();
-                    progressUpdateTimer = setInterval(updateProgress, 5000);
-                }
+                currentStatus.innerText = 'Framing';
+                pauseBtn.disabled = true;
                 break;
             case 'ok:IDLE':
                 gcodeDropzone.classList.remove('disabled');
@@ -115,9 +118,6 @@ stopBtn.addEventListener('click', () => {
                 pauseBtn.value = 'resume';
                 clearInterval(progressUpdateTimer);
                 progressUpdateTimer = null;
-                break;
-            case 'ok:WORKING_FRAMING':
-                currentStatus.innerText = 'Framing';
                 break;
             case 'WORK_STOPED':
                 toastr.error('The current job was canceled either by the user or due to an error.', 'Job canceled');

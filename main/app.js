@@ -111,19 +111,19 @@ app.whenReady().then(() => {
                 case 'err:limitCheck':
                     desktopNotification({body: 'Limit reached!\nThe current job was aborted because a limit switch was activated.', urgency: 'critical'});
                     break;
-                case 'grbl:complete':
-                    desktopNotification({body: 'LightBurn upload complete!\nou can now start the job by pressing the start button on the device.'});
-                    break;
-                case 'grbl:timeout':
-                    desktopNotification({body: 'LightBurn upload failed!\nFile could not be sent to the device.'});
-                    break;
             }
             window.webContents.send('websocket:message', data);
         });
         if(result.result == 'ok' && appSettings.grblBridgeEnabled) {
             grblBridge.start(async data => {
-                if(data.event == 'complete') {
-                    await deviceController.uploadGcode(data.gcode, data.isProgram ? 1 : 0);
+                switch(data.event) {
+                    case 'complete':
+                        await deviceController.uploadGcode(data.gcode, data.isProgram ? 1 : 0);
+                        desktopNotification({body: 'LightBurn upload complete!\nou can now start the job by pressing the start button on the device.'});
+                        break;
+                    case 'timeout':
+                        desktopNotification({body: 'LightBurn upload failed!\nFile could not be sent to the device.'});
+                        break;
                 }
                 window.webContents.send('websocket:message', 'grbl:'+data.event);
             });
