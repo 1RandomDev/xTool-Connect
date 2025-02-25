@@ -32,3 +32,46 @@ body {
     width: 35px;
     background-image: url("../img/plus-circle.svg");
 }
+
+#deviceDiscovery {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    left: 20px;
+    max-height: 150px;
+    overflow-y: auto;
+    background-color: #252627;
+    border: 1px solid #a0a0a0;
+    border-radius: 4px;
+}
+#deviceDiscovery .scanning {
+    display: none;
+    text-align: center;
+    color: #d1d1d1;
+    margin: 10px;
+}
+#deviceDiscovery .rescan {
+    text-align: center;
+    margin: 4px;
+}
+#deviceDiscovery .rescan .rescanBtn {
+    color: #a3a3a3;
+    text-decoration: none;
+}
+#deviceDiscovery .rescan .rescanBtn:hover {
+    text-decoration: underline;
+}
+#deviceDiscovery .device {
+    padding: 10px 15px;
+    border-top: 1px solid #575757;
+    box-sizing: content-box;
+    cursor: pointer;
+}
+#deviceDiscovery .device:hover {
+    background-color: #343536;
+    transition: 0.2s;
+}
+#deviceDiscovery .device .ip {
+    float: right;
+    color: #999999;
+}
