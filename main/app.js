@@ -72,6 +72,9 @@ app.whenReady().then(() => {
         appSettings = {...appSettings, ...settings};
         saveSettings();
     });
+    ipcMain.handle('settings:updateFirmware', (event, updatePath) => {
+        return deviceController.updateFirmware(updatePath);
+    });
 
     ipcMain.handle('wifiSetup:connect', (event, credentials) => {
         return deviceController.setupWifi(credentials);
