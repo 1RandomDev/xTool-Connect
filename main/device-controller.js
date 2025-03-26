@@ -10,6 +10,7 @@ const DIRECTION_MAPPINGS = {
     'right': 'X'
 };
 
+let config;
 let deviceAddress;
 let connected;
 let websocket;
@@ -35,10 +36,11 @@ module.exports.setupWifi = async (credentials) => {
     return {result: 'fail'};
 };
 
-module.exports.connect = async (address, callback) => {
+module.exports.connect = async (address, callback, config_) => {
     if(connected) this.disconnect();
     deviceAddress = address;
     wsCallback = callback;
+    config = config_;
 
     try {
         let res = await axios.get(`http://${deviceAddress}:8080/ping`);
@@ -93,6 +95,11 @@ module.exports.connect = async (address, callback) => {
                 case 'ok:IDLE':
                     paused = false;
                     framing = false;
+                    laserDotActive = false;
+                    break;
+                case 'ok:WORKING_OFFLINE':
+                    framing = false;
+                    laserDotActive = false;
                     break;
                 case 'ok:WORKING_FRAMING':
                     framing = true;
@@ -257,13 +264,14 @@ module.exports.moveLaser = async (direction, distance, speed) => {
     }
 
     try {
+        let laserDotPower = config.laserSpotIntensity;
+        if(laserDotPower > 10) laserDotPower = 10;
+
         let gcode;
         if(direction == 'home') {
             gcode =
 `M17 S1
 M207 S0
-M106 S1
-M205 X424 Y400
 M28
 M18
 `;
@@ -271,14 +279,18 @@ M18
             gcode =
 `M17 S1
 M207 S0
-M106 S1
-M205 X424 Y400
 M101
 G92 X0 Y0
 G90
-G1 ${DIRECTION_MAPPINGS[direction]+distance} F${speed*60} S0
+G1 ${DIRECTION_MAPPINGS[direction]+distance} F${speed*60} S${laserDotActive ? laserDotPower*10 : 0}
 M18
 `;
+        }
+
+        if(laserDotActive) {
+            let power = config.laserSpotIntensity;
+            if(power > 10) power = 10;
+            gcode += `M9 S${power*10} N1000000000000\n`;
         }
 
         await this.executeGcode(gcode);
@@ -332,6 +344,21 @@ module.exports.getCurrentState = async () => {
     }
     return state;
 };
+
+module.exports.dotModeActive = async () => {
+    if(!connected) {
+        console.error('Requesting current dot mode state failed: Not connected');
+        return;
+    }
+
+    try {
+        let res = await axios.get(`http://${deviceAddress}:8080/system?action=dotMode`);
+        return res.data.dotMode == 1;
+    } catch(err) {
+        console.error('Requesting current state failed:', err);
+    }
+    return false;
+}
 
 module.exports.getProgress = async () => {
     if(!connected) {

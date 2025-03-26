@@ -2,9 +2,11 @@ const net = require('node:net');
 
 const GRBL_PORT = 2354;
 const GRBL_HOST = '127.0.0.1';
-let server, clients, callback;
+let server, clients, callback, config, deviceController;
 
-module.exports.start = (cb) => {
+module.exports.start = (cb, config_, deviceController_) => {
+    config = config_;
+    deviceController = deviceController_;
     callback = cb;
     if(server != null) return;
 
@@ -109,21 +111,34 @@ module.exports.stop = () => {
     server = null;
 };
 
-function fireCallback(data) {
+async function fireCallback(data) {
     if(data.event == 'complete') {
         if(data.gcode.length == 0) return;
 
+        const dotMode = await deviceController.dotModeActive();
+        let dotModePower = config.laserSpotIntensity;
+        if(dotModePower > 10) dotModePower = 10;
+
         if(!data.isProgram) {
+            if(dotMode) {
+                data.gcode = data.gcode.replace(/S0/g, '');
+            }
+
             data.gcode =
 `M17 S1
 M207 S${data.isProgram ? 1 : 0}
-M106 S${data.isProgram ? 0 : 1}
+M106 S${(data.isProgram || dotMode) ? 0 : 1}
 M205 X430 Y400
 M101
 G92 X0 Y0
 G0 F9600
-G1 F1000
-${data.gcode}M18`;
+G1 F1000${dotMode ? 'S'+(dotModePower*10) : ''}
+${data.gcode}M18
+`;
+        }
+
+        if(dotMode && deviceController.isLaserDotActive()) {
+            data.gcode += `M9 S${dotModePower*10} N1000000000000\n`;
         }
     }
     callback(data);

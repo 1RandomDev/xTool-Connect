@@ -113,7 +113,7 @@ app.whenReady().then(() => {
                     break;
             }
             window.webContents.send('websocket:message', data);
-        });
+        }, appSettings);
         if(result.result == 'ok' && appSettings.grblBridgeEnabled) {
             grblBridge.start(async data => {
                 switch(data.event) {
@@ -126,7 +126,7 @@ app.whenReady().then(() => {
                         break;
                 }
                 window.webContents.send('websocket:message', 'grbl:'+data.event);
-            });
+            }, appSettings, deviceController);
         }
         return result;
     });
