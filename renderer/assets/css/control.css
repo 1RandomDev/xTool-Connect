@@ -118,3 +118,10 @@
     font-size: 25px;
     margin-top: 4px;
 }
+.statusContainer > * {
+    display: inline;
+}
+.statusContainer .progress > * {
+    display: inline-block;
+    font-size: 10px;
+}

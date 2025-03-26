@@ -172,9 +172,6 @@ input {
     transition: 0.4s;
     cursor: pointer;
 }
-.defaultCheckbox:hover, .defaultRadioButton:hover {
-    accent-color: #28be44;
-}
 .defaultInfoBox {
     border: #00ad21 solid 1px;
     border-radius: 3px;

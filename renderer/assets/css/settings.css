@@ -27,6 +27,10 @@ body {
 #settingsContainer .info {
     font-weight: 600;
 }
+#settingsContainer .tipp {
+    color: #9b9b9b;
+    margin: 5px 0 5px 0;
+}
 #settingsContainer .firmwareVersionContainer {
     display: inline-block;
 }

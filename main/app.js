@@ -27,6 +27,10 @@ if(!fs.existsSync(confFile)) {
 function saveSettings() {
     fs.writeFileSync(confFile, JSON.stringify(appSettings));
 }
+const gcUploadFile = confDir+'/upload.gcode';
+if(!fs.existsSync(gcUploadFile)) {
+    fs.writeFileSync(gcUploadFile, '');
+}
 
 function desktopNotification(msg) {
     if(!appSettings.desktopNotifications) return;
@@ -60,10 +64,6 @@ function createWindow() {
 app.whenReady().then(() => {
     let window = createWindow();
     let firstConnect = true;
-
-    app.on('activate', () => {
-        if(BrowserWindow.getAllWindows().length === 0) window = createWindow();
-    });
 
     ipcMain.handle('settings:get', () => {
         return appSettings;
@@ -121,8 +121,11 @@ app.whenReady().then(() => {
             grblBridge.start(async data => {
                 switch(data.event) {
                     case 'complete':
-                        await deviceController.uploadGcode(data.gcode, data.isProgram ? 1 : 0);
-                        desktopNotification({body: 'LightBurn upload complete!\nou can now start the job by pressing the start button on the device.'});
+                        if(await deviceController.uploadGcode(data.gcode, data.isProgram ? 1 : 0)) {
+                            desktopNotification({body: 'LightBurn upload complete!\nou can now start the job by pressing the start button on the device.'});
+                        } else {
+                            desktopNotification({body: 'LightBurn upload failed!\nCheck logs for more details.'});
+                        }
                         break;
                     case 'timeout':
                         desktopNotification({body: 'LightBurn upload failed!\nFile could not be sent to the device.'});
@@ -155,6 +158,24 @@ app.whenReady().then(() => {
     });
     ipcMain.handle('control:control', (event, action) => {
         return deviceController.control(action);
+    });
+
+    let gcUpload = false;
+    fs.watch(gcUploadFile, async (event, filename) => {
+        if(gcUpload || event != 'change') return;
+        gcUpload = true;
+        setTimeout(() => {
+            gcUpload = false;
+        }, 2000);
+        if(await deviceController.uploadFile(gcUploadFile, 1)) {
+            desktopNotification({body: 'LightBurn upload complete!\nou can now start the job by pressing the start button on the device.'});
+        } else {
+            desktopNotification({body: 'LightBurn upload failed!\nCheck logs for more details.'});
+        }
+    });
+
+    app.on('activate', () => {
+        if(BrowserWindow.getAllWindows().length === 0) window = createWindow();
     });
 });
 
