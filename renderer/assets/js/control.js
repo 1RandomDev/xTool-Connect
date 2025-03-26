@@ -99,6 +99,10 @@ stopBtn.addEventListener('click', () => {
                 currentStatus.innerText = 'Framing';
                 pauseBtn.disabled = true;
                 break;
+            case 'ok:WORKING_OFFLINE':
+                laserSpotActive = false;
+                updateLaserSpotBtn();
+                break;
             case 'ok:IDLE':
                 gcodeDropzone.classList.remove('disabled');
                 disableMoveButtons(false);
@@ -111,6 +115,8 @@ stopBtn.addEventListener('click', () => {
                 clearInterval(progressUpdateTimer);
                 progressUpdateTimer = null;
                 currentProgress.style.width = null;
+                laserSpotActive = false;
+                updateLaserSpotBtn();
                 break;
             case 'ok:PAUSING':
                 currentStatus.innerText = 'Paused';
