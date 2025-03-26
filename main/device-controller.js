@@ -131,7 +131,7 @@ module.exports.getInfo = async () => {
         return {};
     }
 
-    const settings = {};
+    const settings = { ipAddress: deviceAddress };
 
     try {
         let res = await axios.get(`http://${deviceAddress}:8080/getmachinetype`);
@@ -377,7 +377,7 @@ module.exports.getProgress = async () => {
 
 module.exports.control = async (action) => {
     if(!connected) {
-        console.error('Sending control message faild: Not connected');
+        console.error('Sending control message failed: Not connected');
         return;
     }
 
@@ -385,7 +385,26 @@ module.exports.control = async (action) => {
         await axios.get(`http://${deviceAddress}:8080/cnc/data?action=${action}`);
         if(action == 'stop') await this.executeGcode('M108\nM112 N0\nM9 S0 N0\n');
     } catch(err) {
-        console.error('Sending control message faild:', err);
+        console.error('Sending control message failed:', err);
     }
     return;
 };
+
+module.exports.updateFirmware = async (updatePath) => {
+    if(!connected) {
+        console.error('Firmware update failed: Not connected');
+        return false;
+    }
+
+    try {
+        const form = new FormData();
+        form.append('file', fs.createReadStream(updatePath), 'update.bin');
+
+        const res = await axios.post(`http://${deviceAddress}:8080/upgrade`, form);
+        console.log(res.data);
+        return res.data == 'OK';
+    } catch(err) {
+        console.error('Firmware update failed:', err);
+        return false;
+    }
+}

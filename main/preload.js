@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   scanDevices: () => ipcRenderer.invoke('deviceMenu:discover'),
   getSettings: () => ipcRenderer.invoke('settings:get'),
   saveSettings: (settings) => ipcRenderer.invoke('settings:save', settings),
+  updateFirmware: (updatePath) => ipcRenderer.invoke('settings:updateFirmware', updatePath),
   uploadGcode: (path, type) => ipcRenderer.invoke('control:uploadGcode', path, type),
   moveLaser: (direction) => ipcRenderer.invoke('control:moveLaser', direction),
   setLaserDot: (active) => ipcRenderer.invoke('control:setLaserDot', active),

@@ -1,6 +1,7 @@
 const ipAddressField = document.getElementById('ipAddressField');
 const connectBtn = document.getElementById('connectBtn');
 const autoConnectOpt = document.getElementById('autoConnectOpt');
+const deviceDiscovery = document.getElementById('deviceDiscovery');
 
 ipAddressField.addEventListener('keyup', () => {
     connectBtn.disabled = ipAddressField.value == '';
@@ -11,6 +12,7 @@ ipAddressField.addEventListener('keypress', event => {
     }
 });
 connectBtn.addEventListener('click', () => {
+    if(connectBtn.classList.contains('running')) return;
     connectBtn.classList.add('running');
     window.electronAPI.saveSettings({deviceAddress: ipAddressField.value});
 
@@ -27,6 +29,10 @@ connectBtn.addEventListener('click', () => {
 autoConnectOpt.addEventListener('change', () => {
     window.electronAPI.saveSettings({autoConnect: autoConnectOpt.checked});
 });
+deviceDiscovery.querySelector('.rescanBtn').addEventListener('click', event => {
+    event.preventDefault();
+    scanDevices();
+});
 
 (async () => {
     const settings = await window.electronAPI.getSettings();
@@ -37,9 +43,39 @@ autoConnectOpt.addEventListener('change', () => {
     if(settings.autoConnect && await window.electronAPI.firstConnect()) {
         connectBtn.click();
     }
+
+    const params = new URLSearchParams(window.location.search);
+    if(params.get('message') == 'timeout') {
+        toastr.error('Connection to device lost. Please check your internet connection and reconnect.', 'Connection lost');
+        if(settings.autoConnect) {
+            setTimeout(() => {
+                connectBtn.click();
+            }, 5000);
+        }
+    }
+
+    scanDevices();
 })();
 
-const params = new URLSearchParams(window.location.search);
-if(params.get('message') == 'timeout') {
-    toastr.error('Connection to device lost. Please check your internet connection and reconnect.', 'Connection lost');
+async function scanDevices() {
+    const rescan = deviceDiscovery.querySelector('.rescan');
+    const scanning = deviceDiscovery.querySelector('.scanning');
+    rescan.style.display = 'none';
+    scanning.style.display = 'block';
+
+    const devices = await window.electronAPI.scanDevices();
+    for(let dev of deviceDiscovery.querySelectorAll('.device')) dev.remove();
+    devices.forEach(dev => {
+        const element = document.createElement('div');
+        element.classList.add('device');
+        element.innerHTML = `<span class="name">${dev.name}</span><span class="ip">${dev.ip}</span>`;
+        element.onclick = () => {
+            ipAddressField.value = dev.ip;
+            connectBtn.click();
+        };
+        deviceDiscovery.appendChild(element);
+    });
+
+    rescan.style.display = null;
+    scanning.style.display = null;
 }

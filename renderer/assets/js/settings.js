@@ -14,6 +14,18 @@ settingsContainer.addEventListener('change', event => {
         settingsContainer.querySelector('[name="crossOffsetY"]').disabled = value == '1';
     }
 });
+document.getElementById('updateButton').addEventListener('click', async event => {
+    let input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.bin';
+    input.onchange = () => {
+        toastr.success('The device will restart after the update has been completed.', 'Started firmware update');
+        event.target.innerText = 'Uploading...';
+        event.target.disabled = true;
+        window.electronAPI.updateFirmware(input.files[0].path);
+    };
+    input.click();
+});
 
 (async () => {
     const deviceInfo = await window.electronAPI.getDeviceInfo();
