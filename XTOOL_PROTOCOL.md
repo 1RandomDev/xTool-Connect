@@ -90,7 +90,7 @@ Used for querying and changing settings of the machine.
 | flameAlarmMode        | Must be used together with `action=setFlameAlarmMode`.<br>Supported values: unknown |
 | flameAlarmSensitivity | Must be used together with `action=setFlameAlarmSensitivity`.<br>Supported values: 1 = high, 2 = low, 3 = off |
 ###### Response:
-```json
+```json5
 // action=mac
 {
 	"result": "ok",
