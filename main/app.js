@@ -57,7 +57,7 @@ function createWindow() {
         window.setResizable(false);
     }
 
-    window.loadFile('../renderer/index.html');
+    window.loadFile(path.join(__dirname, '../renderer/index.html'));
     return window;
 }
 
@@ -99,7 +99,7 @@ app.whenReady().then(() => {
             switch(data) {
                 case 'err:TIMEOUT':
                     desktopNotification({body: 'Connection to device lost. Please check your internet connection and reconnect.'});
-                    window.loadFile('../renderer/index.html', {
+                    window.loadFile(path.join(__dirname, '../renderer/index.html'), {
                         query: {message: 'timeout'}
                     });
                     grblBridge.stop();
