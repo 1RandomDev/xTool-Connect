@@ -65,6 +65,10 @@ app.whenReady().then(() => {
     let window = createWindow();
     let firstConnect = true;
 
+    if(process.platform === 'win32') {
+        app.setAppUserModelId(app.name);
+    }
+
     ipcMain.handle('settings:get', () => {
         return appSettings;
     });

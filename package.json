@@ -25,8 +25,11 @@
       "artifactName": "${productName}-${version}-linux.${ext}"
     },
     "win": {
-      "target": [ "msi", "zip" ],
+      "target": [ "nsis", "zip" ],
       "artifactName": "${productName}-${version}-windows.${ext}"
+    },
+    "nsis": {
+      "oneClick": false
     }
   },
   "dependencies": {
