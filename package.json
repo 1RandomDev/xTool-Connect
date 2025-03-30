@@ -21,14 +21,12 @@
     ],
     "linux": {
       "category": "Utility",
-      "target": [
-        "AppImage"
-      ]
+      "target": [ "AppImage", "tar.gz" ],
+      "artifactName": "${productName}-${version}-linux.${ext}"
     },
     "win": {
-      "target": [
-        "msi"
-      ]
+      "target": [ "msi", "zip" ],
+      "artifactName": "${productName}-${version}-windows.${ext}"
     }
   },
   "dependencies": {
