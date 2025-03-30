@@ -67,7 +67,7 @@ module.exports.connect = async (address, callback, config_) => {
             lastHeartbeat = Date.now();
             heartbeatTimer = setInterval(() => {
                 websocket.ping();
-                if(lastHeartbeat + 4100 < Date.now()) {
+                if(lastHeartbeat + 6100 < Date.now()) {
                     wsCallback('err:TIMEOUT');
                     console.log('Connection to device timed out.');
                     websocket.terminate();

@@ -290,6 +290,8 @@ $ echo '{"requestId":123456}' | socat - UDP-DATAGRAM:255.255.255.255:20000,broad
 }
 ```
 
+After receiving the UDP request on port 20000, the device will first try to reply on TCP port 20001 and only then send the same response on UDP port 20000. If TCP port 20001 is blocked by a firewall the device will wait until the connections timed out before using UDP, creating a 20 second delay.
+
 
 #### GCODE
 Incomplete right now.
