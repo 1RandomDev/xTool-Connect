@@ -232,7 +232,8 @@ Endpoint for uploading firmware update. Used by the web based updater and XCS.
 | Name | Required | Description           |
 | ---- | -------- | --------------------- |
 | file | Yes      | Firmware binary file. |
-**Response:**
+
+##### Response:
 `OK` or `FAIL` in plain Text
 
 ##### GET `/framing`
@@ -260,7 +261,7 @@ Set WiFi configuration.
 | ok:IDLE              | Machine finished a job or job was aborted and is now in idle again. |
 | ok:WORKING_\<state\> | Machine entered working state, available states are WORKING_ONLINE, WORKING_ONLINE_READY, WORKING_OFFLINE, WORKING_FRAMING, WORKING_FRAME_READY. |
 | ok:PAUSING           | Current job paused either via the button or via the API. |
-| WORK_STOPPED          | Current job has been canceled by holding the power button for 3s or API. |
+| WORK_STOPPED          | Current job has been canceled by holding the power button for 3s or via the API. |
 | ok:ERROR             | An error occurred. |
 | err:tiltCheck        | Tilt sensor exceeded threshold. |
 | err:movingCheck      | Movement sensor exceeded threshold. |
@@ -269,11 +270,14 @@ Set WiFi configuration.
 
 #### Discovery
 ##### UDP Broadcast
+> [!IMPORTANT]
+> After receiving the UDP request on port 20000, the device will first try to reply on TCP port 20001 and only then send the same response on UDP port 20000. If TCP port 20001 is blocked by a firewall the device will wait until the connection timed out before using UDP, creating a 20 second delay.
+
 Broadcast message:
 ```js
 {
-  "ip": "192.168.178.211",  // Address of the current computer
-  "port": 20000,
+  "ip": "192.168.178.211",  // optional, address of the current computer
+  "port": 20000,            // optional
   "requestId": 123456       // Request ID (will be included in the response for identification)
 }
 ```
@@ -290,11 +294,11 @@ $ echo '{"requestId":123456}' | socat - UDP-DATAGRAM:255.255.255.255:20000,broad
 }
 ```
 
-After receiving the UDP request on port 20000, the device will first try to reply on TCP port 20001 and only then send the same response on UDP port 20000. If TCP port 20001 is blocked by a firewall the device will wait until the connections timed out before using UDP, creating a 20 second delay.
-
 
 #### GCODE
-Incomplete right now.
+> [!WARNING]
+> Incomplete right now.
+
 | Code           | Description                   |
 | -------------- | ----------------------------- |
 | M28            | Move to home position         |
