@@ -21,11 +21,17 @@
     ],
     "linux": {
       "category": "Utility",
-      "target": [ "AppImage", "tar.gz" ],
+      "target": [
+        "AppImage",
+        "tar.gz"
+      ],
       "artifactName": "${productName}-${version}-linux.${ext}"
     },
     "win": {
-      "target": [ "nsis", "zip" ],
+      "target": [
+        "nsis",
+        "zip"
+      ],
       "artifactName": "${productName}-${version}-windows.${ext}"
     },
     "nsis": {
@@ -33,11 +39,10 @@
     }
   },
   "dependencies": {
-    "axios": "^1.6.3",
-    "ws": "^8.16.0"
+    "ws": "^8.19.0"
   },
   "devDependencies": {
-    "electron": "^35.1.0",
-    "electron-builder": "^26.0.12"
+    "electron": "^40.4.1",
+    "electron-builder": "^26.7.0"
   }
 }

@@ -1,4 +1,3 @@
-const axios = require('axios');
 const { WebSocket } = require('ws');
 const fs = require('node:fs');
 const FormData = require('form-data');
@@ -22,12 +21,12 @@ let framing = false;
 
 module.exports.setupWifi = async (credentials) => {
     try {
-        const response = await axios.post('http://192.168.40.1:8080/net?action=connsta', credentials.ssid+' '+credentials.password, {
-            headers: {
-                'Content-Type': 'text/plain'
-            }
+        const res = await fetchJson('http://192.168.40.1:8080/net?action=connsta', {
+            method: 'POST',
+            headers: new Headers({'Content-Type': 'text/plain'}),
+            body: credentials.ssid+' '+credentials.password
         });
-        if(response.data.result == 'ok') return {result: 'ok'};
+        if(res.result == 'ok') return {result: 'ok'};
     } catch(err) {
         console.error("WiFi setup failed:", err.message);
         if(err.code == 'ENETUNREACH') return {result: 'fail_network'};
@@ -43,9 +42,9 @@ module.exports.connect = async (address, callback, config_) => {
     config = config_;
 
     try {
-        let res = await axios.get(`http://${deviceAddress}:8080/ping`);
-        if(res.data.result != 'ok') {
-            console.error('Device connect failed: Ping response invalid:', res.data);
+        let res = await fetchJson(`http://${deviceAddress}:8080/ping`);
+        if(res.result != 'ok') {
+            console.error('Device connect failed: Ping response invalid:', res);
             return {result: 'fail'}
         }
     } catch(err) {
@@ -134,33 +133,33 @@ module.exports.getInfo = async () => {
     const settings = { ipAddress: deviceAddress };
 
     try {
-        let res = await axios.get(`http://${deviceAddress}:8080/getmachinetype`);
-        settings.deviceModel = res.data.type;
+        let res = await fetchJson(`http://${deviceAddress}:8080/getmachinetype`);
+        settings.deviceModel = res.type;
     
-        res = await axios.get(`http://${deviceAddress}:8080/getlaserpowertype`);
-        settings.laserPower = res.data.power+'W';
+        res = await fetchJson(`http://${deviceAddress}:8080/getlaserpowertype`);
+        settings.laserPower = res.power+'W';
     
-        res = await axios.get(`http://${deviceAddress}:8080/peripherystatus`);
-        settings.flameAlarmMode = res.data.flameAlarmSensitivity;
-        settings.tiltSwitchMode = res.data.tiltStopFlag;
-        settings.limitSwitchesMode = res.data.limitStopFlag;
+        res = await fetchJson(`http://${deviceAddress}:8080/peripherystatus`);
+        settings.flameAlarmMode = res.flameAlarmSensitivity;
+        settings.tiltSwitchMode = res.tiltStopFlag;
+        settings.limitSwitchesMode = res.limitStopFlag;
     
-        res = await axios.get(`http://${deviceAddress}:8080/system?action=get_dev_name`);
-        settings.deviceName = res.data.name;
+        res = await fetchJson(`http://${deviceAddress}:8080/system?action=get_dev_name`);
+        settings.deviceName = res.name;
     
-        res = await axios.get(`http://${deviceAddress}:8080/system?action=mac`);
-        settings.macAddress = res.data.mac;
+        res = await fetchJson(`http://${deviceAddress}:8080/system?action=mac`);
+        settings.macAddress = res.mac;
     
-        res = await axios.get(`http://${deviceAddress}:8080/system?action=version`);
-        settings.firmwareVersion = res.data.version;
-        settings.serialNumber = res.data.sn;
+        res = await fetchJson(`http://${deviceAddress}:8080/system?action=version`);
+        settings.firmwareVersion = res.version;
+        settings.serialNumber = res.sn;
     
-        res = await axios.get(`http://${deviceAddress}:8080/system?action=offset`);
-        settings.crossOffsetX = res.data.x;
-        settings.crossOffsetY = res.data.y;
+        res = await fetchJson(`http://${deviceAddress}:8080/system?action=offset`);
+        settings.crossOffsetX = res.x;
+        settings.crossOffsetY = res.y;
     
-        res = await axios.get(`http://${deviceAddress}:8080/system?action=dotMode`);
-        settings.positioningMode = res.data.dotMode;
+        res = await fetchJson(`http://${deviceAddress}:8080/system?action=dotMode`);
+        settings.positioningMode = res.dotMode;
     } catch(err) {
         console.error('Getting device info failed:', err);
     }
@@ -178,32 +177,32 @@ module.exports.saveSettings = async (settings) => {
         for([name, value] of Object.entries(settings)) {
             switch(name) {
                 case 'flameAlarmMode':
-                    await axios.get(`http://${deviceAddress}:8080/system?action=setFlameAlarmSensitivity&flameAlarmSensitivity=${value}`);
+                    await fetchText(`http://${deviceAddress}:8080/system?action=setFlameAlarmSensitivity&flameAlarmSensitivity=${value}`);
                     break;
     
                 case 'tiltSwitchMode':
-                    await axios.get(`http://${deviceAddress}:8080/system?action=setTiltStopSwitch&tiltStopSwitch=${value}`);
-                    await axios.get(`http://${deviceAddress}:8080/system?action=setMovingStopSwitch&movingStopSwitch=${value}`);
+                    await fetchText(`http://${deviceAddress}:8080/system?action=setTiltStopSwitch&tiltStopSwitch=${value}`);
+                    await fetchText(`http://${deviceAddress}:8080/system?action=setMovingStopSwitch&movingStopSwitch=${value}`);
                     break;
     
                 case 'limitSwitchesMode':
-                    await axios.get(`http://${deviceAddress}:8080/system?action=setLimitStopSwitch&limitStopSwitch=${value}`);
+                    await fetchText(`http://${deviceAddress}:8080/system?action=setLimitStopSwitch&limitStopSwitch=${value}`);
                     break;
     
                 case 'deviceName':
-                    await axios.get(`http://${deviceAddress}:8080/system?action=set_dev_name&name=${value}`);
+                    await fetchText(`http://${deviceAddress}:8080/system?action=set_dev_name&name=${value}`);
                     break;
     
                 case 'crossOffsetX':
-                    await axios.get(`http://${deviceAddress}:8080/cmd?cmd=M98 X${value}`);
+                    await fetchText(`http://${deviceAddress}:8080/cmd?cmd=M98 X${value}`);
                     break;
     
                 case 'crossOffsetY':
-                    await axios.get(`http://${deviceAddress}:8080/cmd?cmd=M98 Y${value}`);
+                    await fetchText(`http://${deviceAddress}:8080/cmd?cmd=M98 Y${value}`);
                     break;
                 
                 case 'positioningMode':
-                    await axios.get(`http://${deviceAddress}:8080/cmd?cmd=M97 S${value}`);
+                    await fetchText(`http://${deviceAddress}:8080/cmd?cmd=M97 S${value}`);
                     break;
             }
         }
@@ -226,7 +225,10 @@ module.exports.uploadGcode = async (content, type) => {
         form.append('file', content, 'export.gcode');
 
         console.log(`Uploading file GCODE type ${type}`);
-        await axios.post(`http://${deviceAddress}:8080/upload?filetype=${type}`, form);
+        await fetchText(`http://${deviceAddress}:8080/upload?filetype=${type}`, {
+            method: 'POST',
+            body: form
+        });
 
         if(type == 0) {
             wsCallback('ok:WORKING_FRAMING');
@@ -246,10 +248,10 @@ module.exports.executeGcode = async (gcode) => {
     }
 
     try {
-        await axios.post(`http://${deviceAddress}:8080/cmd`, gcode, {
-            headers: {
-                'Content-Type': 'text/plain'
-            }
+        await fetchText(`http://${deviceAddress}:8080/cmd`, {
+            method: 'POST',
+            headers: new Headers({'Content-Type': 'text/plain'}),
+            body: gcode
         });
     } catch(err) {
         console.error('Executing GCODE failed:', err);
@@ -327,14 +329,14 @@ module.exports.getCurrentState = async () => {
 
     const state = {};
     try {
-        let res = await axios.get(`http://${deviceAddress}:8080/system?action=get_dev_name`);
-        state.deviceName = res.data.name;
+        let res = await fetchJson(`http://${deviceAddress}:8080/system?action=get_dev_name`);
+        state.deviceName = res.name;
     
-        res = await axios.get(`http://${deviceAddress}:8080/system?action=get_working_sta`);
-        state.working = res.data.working != 0;
+        res = await fetchJson(`http://${deviceAddress}:8080/system?action=get_working_sta`);
+        state.working = res.working != 0;
 
-        res = await axios.get(`http://${deviceAddress}:8080/system?action=dotMode`);
-        state.dotMode = res.data.dotMode == 1;
+        res = await fetchJson(`http://${deviceAddress}:8080/system?action=dotMode`);
+        state.dotMode = res.dotMode == 1;
 
         state.laserDotActive = laserDotActive;
         state.paused = paused;
@@ -352,8 +354,8 @@ module.exports.dotModeActive = async () => {
     }
 
     try {
-        let res = await axios.get(`http://${deviceAddress}:8080/system?action=dotMode`);
-        return res.data.dotMode == 1;
+        let res = await fetchJson(`http://${deviceAddress}:8080/system?action=dotMode`);
+        return res.dotMode == 1;
     } catch(err) {
         console.error('Requesting current state failed:', err);
     }
@@ -367,8 +369,8 @@ module.exports.getProgress = async () => {
     }
 
     try {
-        let res = await axios.get(`http://${deviceAddress}:8080/progress`);
-        return Math.round(res.data.progress);
+        let res = await fetchJson(`http://${deviceAddress}:8080/progress`);
+        return Math.round(res.progress);
     } catch(err) {
         console.error('Requesting current progress failed:', err);
     }
@@ -382,7 +384,7 @@ module.exports.control = async (action) => {
     }
 
     try {
-        await axios.get(`http://${deviceAddress}:8080/cnc/data?action=${action}`);
+        await fetchText(`http://${deviceAddress}:8080/cnc/data?action=${action}`);
         if(action == 'stop') await this.executeGcode('M108\nM112 N0\nM9 S0 N0\n');
     } catch(err) {
         console.error('Sending control message failed:', err);
@@ -400,11 +402,26 @@ module.exports.updateFirmware = async (updatePath) => {
         const form = new FormData();
         form.append('file', fs.createReadStream(updatePath), 'update.bin');
 
-        const res = await axios.post(`http://${deviceAddress}:8080/upgrade`, form);
-        console.log(res.data);
-        return res.data == 'OK';
+        const res = await fetchJson(`http://${deviceAddress}:8080/upgrade`, {
+            method: 'POST',
+            body: form
+        });
+        console.log(res);
+        return res == 'OK';
     } catch(err) {
         console.error('Firmware update failed:', err);
         return false;
     }
+}
+
+async function fetchJson(input, init) {
+    let res = await fetch(input, init);
+    if(!res.ok) throw new Error('Request failed with status: '+res.status);
+    return res.json();
+}
+
+async function fetchText(input, init) {
+    let res = await fetch(input, init);
+    if(!res.ok) throw new Error('Request failed with status: '+res.status);
+    return res.text();
 }
