@@ -71,6 +71,7 @@ async function scanDevices() {
         element.innerHTML = `<span class="name">${dev.name}</span><span class="ip">${dev.ip}</span>`;
         element.onclick = () => {
             ipAddressField.value = dev.ip;
+            connectBtn.disabled = false;
             connectBtn.click();
         };
         deviceDiscovery.appendChild(element);
