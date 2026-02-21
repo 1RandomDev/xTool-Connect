@@ -1,6 +1,5 @@
 const { WebSocket } = require('ws');
 const fs = require('node:fs');
-const FormData = require('form-data');
 
 const DIRECTION_MAPPINGS = {
     'up': 'Y-',
@@ -221,8 +220,9 @@ module.exports.uploadGcode = async (content, type) => {
     }
 
     try {
+        const blob = new Blob([content], { type: 'text/plain' });
         const form = new FormData();
-        form.append('file', content, 'export.gcode');
+        form.set('file', blob, 'export.gcode');
 
         console.log(`Uploading file GCODE type ${type}`);
         await fetchText(`http://${deviceAddress}:8080/upload?filetype=${type}`, {
@@ -400,7 +400,7 @@ module.exports.updateFirmware = async (updatePath) => {
 
     try {
         const form = new FormData();
-        form.append('file', fs.createReadStream(updatePath), 'update.bin');
+        form.set('file', await fs.openAsBlob(updatePath), 'update.bin');
 
         const res = await fetchJson(`http://${deviceAddress}:8080/upgrade`, {
             method: 'POST',

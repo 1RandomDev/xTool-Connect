@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer } = require('electron/renderer');
+const { contextBridge, ipcRenderer, webUtils } = require('electron/renderer');
 
 contextBridge.exposeInMainWorld('electronAPI', {
   onWebsocketMessage: (callback) => ipcRenderer.on('websocket:message', (event, message) => callback(message)),
@@ -18,4 +18,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getCurrentState: () => ipcRenderer.invoke('control:currentState'),
   getProgress: () => ipcRenderer.invoke('control:getProgress'),
   control: (action) => ipcRenderer.invoke('control:control', action),
+  getFilePath: (file) => webUtils.getPathForFile(file)
 });

@@ -22,7 +22,8 @@ document.getElementById('updateButton').addEventListener('click', async event =>
         toastr.success('The device will restart after the update has been completed.', 'Started firmware update');
         event.target.innerText = 'Uploading...';
         event.target.disabled = true;
-        window.electronAPI.updateFirmware(input.files[0].path);
+        let path = window.electronAPI.getFilePath(input.files[0]);
+        window.electronAPI.updateFirmware(path);
     };
     input.click();
 });
